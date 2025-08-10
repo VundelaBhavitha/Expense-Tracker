@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .balance, .income, .expense {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .income { color: green; }
+        .expense { color: red; }
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        form input, form select, form button {
+            padding: 8px;
+            font-size: 14px;
+        }
+        form input, form select {
+            flex: 1;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #f9f9f9;
+            border-left: 5px solid;
+        }
+        li.income {
+            border-color: green;
+        }
+        li.expense {
+            border-color: red;
+        }
+        button.delete {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <div class="balance">Balance: ₹<span id="balance">0</span></div>
+        <div class="income">Income: ₹<span id="income">0</span></div>
+        <div class="expense">Expense: ₹<span id="expense">0</span></div>
+
+        <form id="transaction-form">
+            <input type="text" id="description" placeholder="Description" required>
+            <input type="number" id="amount" placeholder="Amount" required>
+            <select id="type">
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+            <button type="submit">Add</button>
+        </form>
+
+        <ul id="transactions"></ul>
+    </div>
+
+    <script>
+        const balanceEl = document.getElementById('balance');
+        const incomeEl = document.getElementById('income');
+        const expenseEl = document.getElementById('expense');
+        const transactionsEl = document.getElementById('transactions');
+        const form = document.getElementById('transaction-form');
+        const descriptionInput = document.getElementById('description');
+        const amountInput = document.getElementById('amount');
+        const typeInput = document.getElementById('type');
+
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function updateValues() {
+            let income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            let expense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            let balance = income - expense;
+
+            incomeEl.textContent = income.toFixed(2);
+            expenseEl.textContent = expense.toFixed(2);
+            balanceEl.textContent = balance.toFixed(2);
+        }
+
+        function renderTransactions() {
+            transactionsEl.innerHTML = '';
+            transactions.forEach((t, index) => {
+                const li = document.createElement('li');
+                li.classList.add(t.type);
+                li.innerHTML = `
+                    ${t.description} <span>₹${t.amount.toFixed(2)}</span>
+                    <button class="delete" onclick="deleteTransaction(${index})">x</button>
+                `;
+                transactionsEl.appendChild(li);
+            });
+        }
+
+        function addTransaction(e) {
+            e.preventDefault();
+            const description = descriptionInput.value.trim();
+            const amount = parseFloat(amountInput.value);
+            const type = typeInput.value;
+
+            if (description && !isNaN(amount)) {
+                transactions.push({ description, amount, type });
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                descriptionInput.value = '';
+                amountInput.value = '';
+                renderTransactions();
+                updateValues();
+            }
+        }
+
+        function deleteTransaction(index) {
+            transactions.splice(index, 1);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            renderTransactions();
+            updateValues();
+        }
+
+        form.addEventListener('submit', addTransaction);
+
+        renderTransactions();
+        updateValues();
+    </script>
+</body>
+</html>
