@@ -8,6 +8,7 @@ This project allows users to track their income and expenses, calculate balances
 ##  Project Structure
 
 expense_tracker/
+
 │── index.html # Main HTML file
 │── styles.css # Styles for the app
 │── script.js # App logic and interactivity
@@ -23,7 +24,7 @@ expense_tracker/
 
 ---
 
-## 🛠️ Technologies Used
+##  Technologies Used
 
 - **HTML5** – Structure  
 - **CSS3** – Styling and layout  
