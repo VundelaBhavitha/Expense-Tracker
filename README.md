@@ -35,7 +35,7 @@ expense_tracker/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/expense-tracker.git
+   git clone https://github.com/VundelaBhavitha/expense-tracker.git
 
 **Navigate into the project folder**
 cd expense-tracker
